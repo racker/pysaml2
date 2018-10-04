@@ -400,9 +400,8 @@ class StatusResponse(object):
         if self.asynchop:
             if self.response.destination and \
                             self.response.destination not in self.return_addrs:
-                logger.error("%s not in %s", self.response.destination,
-                             self.return_addrs)
-                return None
+                raise AssertionError("%s not in %s" % (self.response.destination,
+                             self.return_addrs))
 
         assert self.issue_instant_ok()
         assert self.status_ok()
@@ -412,11 +411,7 @@ class StatusResponse(object):
         return self._loads(xmldata, decode, origxml)
 
     def verify(self, keys=None):
-        try:
-            return self._verify()
-        except AssertionError:
-            logger.exception("verify")
-            return None
+        return self._verify()
 
     def update(self, mold):
         self.xmlstr = mold.xmlstr
